@@ -1,0 +1,39 @@
+# WiFiGuard
+
+**A Wi-Fi safety project — AI-based risk detection for public/unknown Wi-Fi networks.**
+
+## The Problem
+
+Connecting to unknown Wi-Fi (airports, cafes, hotels) exposes users to real risks: evil twin networks (fake copies of a real hotspot), man-in-the-middle attacks, and open/unencrypted connections that let others read traffic. Most users have no way to tell a safe network from a dangerous one just by looking at its name.
+
+## The Idea
+
+WiFiGuard scans nearby Wi-Fi networks, scores each one for risk using a trained machine learning model, alerts the user in plain language when something looks suspicious, recommends a nearby trusted network based on connection history, and prompts the user to enable a VPN to protect their data when risk is detected.
+
+## Current Status
+
+This repository currently contains the **website demo** — a browser cannot scan real nearby Wi-Fi networks (a browser security restriction), so this stage uses simulated data to demonstrate the full concept: the scan animation, risk scoring, evil-twin alert, and safe-network recommendation.
+
+**Roadmap:**
+- [x] Website demo with simulated scan (current)
+- [ ] Train risk-detection ML model on real Wi-Fi attack data (AWID/AWID3 dataset)
+- [ ] Build Android app with real on-device Wi-Fi scanning (WifiManager API)
+- [ ] Integrate trained model on-device (TensorFlow Lite)
+- [ ] Add crowd-sourced trusted-network history
+- [ ] Add auto-VPN prompt on detected risk
+
+## Tech Stack
+
+- **Website:** HTML, CSS, JavaScript
+- **Model training:** Python, scikit-learn, Google Colab (free)
+- **Dataset:** AWID/AWID3 public Wi-Fi intrusion dataset
+- **Planned app:** Android (Kotlin/Java), TensorFlow Lite
+- **Hosting:** GitHub Pages (free)
+
+## What This Is Not
+
+WiFiGuard detects risk and guides the user toward safer choices (a recommended network, a VPN prompt) — it does not block or intercept an attack directly. This is an accurate and important distinction for how the project is presented.
+
+## Author
+
+Sanika — Computer Science Engineering student, built as a cybersecurity + AI college project.
