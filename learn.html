@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WifiSecure — Why This Matters</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0F1E;
+    --panel:#121A2C;
+    --panel-alt:#1A2338;
+    --grid:#212C46;
+    --text:#EDF1F7;
+    --muted:#7E8AA6;
+    --safe:#35D0B0;
+    --safe-dim: rgba(53,208,176,0.14);
+    --warn:#F2A93B;
+    --warn-dim: rgba(242,169,59,0.14);
+    --danger:#FF5D5D;
+    --danger-dim: rgba(255,93,93,0.16);
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Inter', sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(53,208,176,0.08), transparent 60%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+  .wrap{max-width:900px;margin:0 auto;padding:0 24px 70px;}
+
+  nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:22px 0;border-bottom:1px solid var(--grid);margin-bottom:10px;
+  }
+  .logo{font-family:var(--mono);font-weight:700;font-size:15px;display:flex;align-items:center;gap:10px;}
+  .logo .dot{
+    width:9px;height:9px;border-radius:50%;background:var(--safe);
+    box-shadow:0 0 0 4px var(--safe-dim);animation:pulse 2.2s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 4px var(--safe-dim);}50%{box-shadow:0 0 0 8px transparent;}}
+  .nav-links{display:flex;gap:26px;}
+  .nav-links a{
+    font-family:var(--sans);font-size:14px;font-weight:500;color:var(--muted);
+    text-decoration:none;padding-bottom:4px;border-bottom:2px solid transparent;transition:color 0.2s ease;
+  }
+  .nav-links a:hover{color:var(--text);}
+  .nav-links a.active{color:var(--safe);border-bottom-color:var(--safe);}
+
+  .page-head{padding:44px 0 8px;text-align:center;}
+  .eyebrow{
+    font-family:var(--mono);color:var(--safe);font-size:12px;
+    letter-spacing:0.14em;text-transform:uppercase;margin-bottom:14px;
+  }
+  h1{font-size:32px;margin:0 0 14px;font-weight:700;}
+  .page-head p{color:var(--muted);font-size:15px;max-width:520px;margin:0 auto;line-height:1.6;}
+
+  /* STORYBOARD STAGE */
+  .stage{
+    position:relative;
+    background:var(--panel);
+    border:1px solid var(--grid);
+    border-radius:16px;
+    height:340px;
+    margin:44px 0 20px;
+    overflow:hidden;
+  }
+  .scene{
+    position:absolute;inset:0;
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;
+    transition:opacity 0.5s ease;
+    padding:30px;
+  }
+  .scene.active{opacity:1;}
+  .scene-inner{display:flex;align-items:center;gap:44px;flex-wrap:wrap;justify-content:center;}
+
+  .device{
+    width:70px;height:120px;border-radius:14px;
+    background:var(--panel-alt);border:2px solid var(--grid);
+    position:relative;flex-shrink:0;
+  }
+  .device::after{
+    content:'';position:absolute;bottom:8px;left:50%;transform:translateX(-50%);
+    width:24px;height:3px;background:var(--grid);border-radius:2px;
+  }
+  .device .screen{
+    position:absolute;top:10px;left:8px;right:8px;bottom:22px;
+    background:var(--bg);border-radius:6px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px;
+  }
+
+  .wifi-tower{
+    width:56px;height:56px;border-radius:50%;
+    background:var(--panel-alt);border:2px solid var(--grid);
+    display:flex;align-items:center;justify-content:center;font-size:24px;
+    position:relative;flex-shrink:0;
+  }
+  .waves{position:absolute;inset:-14px;border-radius:50%;border:2px solid var(--safe);opacity:0;}
+  .waves.animate{animation:wave 1.8s ease-out infinite;}
+  @keyframes wave{0%{transform:scale(0.6);opacity:0.7;}100%{transform:scale(1.6);opacity:0;}}
+
+  .hacker-tower .waves.animate{border-color:var(--danger);animation:wave 1.4s ease-out infinite;}
+  .hacker-tower{background:var(--danger-dim);border-color:rgba(255,93,93,0.5);}
+
+  .arrow-flow{font-size:26px;color:var(--muted);}
+  .arrow-flow.danger{color:var(--danger);}
+  .arrow-flow.safe{color:var(--safe);}
+
+  .data-chip{
+    font-family:var(--mono);font-size:11px;
+    background:var(--danger-dim);color:var(--danger);
+    border:1px solid rgba(255,93,93,0.4);
+    padding:4px 10px;border-radius:6px;
+    position:absolute;
+    animation:floatUp 2.2s ease-in infinite;
+    opacity:0;
+  }
+  @keyframes floatUp{
+    0%{opacity:0;transform:translateY(0);}
+    15%{opacity:1;}
+    85%{opacity:1;}
+    100%{opacity:0;transform:translateY(-40px);}
+  }
+
+  .caption{
+    text-align:center;font-size:14px;color:var(--text);
+    max-width:480px;margin:0 auto;line-height:1.6;
+  }
+  .caption b{color:var(--safe);}
+  .caption.danger-cap b{color:var(--danger);}
+
+  /* CONTROLS */
+  .controls{
+    display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:56px;
+  }
+  .dots{display:flex;gap:8px;}
+  .dot-step{
+    width:8px;height:8px;border-radius:50%;background:var(--grid);cursor:pointer;transition:background 0.2s ease;
+  }
+  .dot-step.active{background:var(--safe);}
+  .ctrl-btn{
+    font-family:var(--sans);font-weight:600;font-size:13px;
+    background:var(--panel-alt);color:var(--text);border:1px solid var(--grid);
+    border-radius:20px;padding:8px 18px;cursor:pointer;
+  }
+  .ctrl-btn:hover{border-color:var(--safe);color:var(--safe);}
+
+  /* SUMMARY CARDS */
+  .section-head{font-family:var(--mono);font-size:13px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin:0 0 18px;}
+  .glossary{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:50px;}
+  .g-card{background:var(--panel);border:1px solid var(--grid);border-radius:12px;padding:16px 18px;}
+  .g-card b{font-size:14px;display:block;margin-bottom:4px;}
+  .g-card span{font-size:13px;color:var(--muted);line-height:1.5;}
+
+  .cta{
+    background:linear-gradient(135deg, var(--panel-alt), var(--panel));
+    border:1px solid rgba(53,208,176,0.3);border-radius:14px;
+    padding:26px 28px;text-align:center;
+  }
+  .cta h3{margin:0 0 8px;font-size:18px;}
+  .cta p{margin:0 0 18px;color:var(--muted);font-size:13.5px;}
+  .cta a button{
+    font-family:var(--sans);font-weight:600;font-size:14px;
+    background:var(--safe);color:#04211C;border:none;border-radius:8px;
+    padding:12px 24px;cursor:pointer;
+  }
+
+  footer{border-top:1px solid var(--grid);padding:26px 0 0;margin-top:40px;font-family:var(--mono);font-size:11.5px;color:var(--muted);text-align:center;}
+
+  @media (max-width:640px){
+    .glossary{grid-template-columns:1fr;}
+    .stage{height:400px;}
+    .scene-inner{flex-direction:column;gap:20px;}
+    .arrow-flow{transform:rotate(90deg);}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav>
+    <div class="logo"><span class="dot"></span> WIFISECURE</div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="demo.html">Live Demo</a>
+      <a href="learn.html" class="active">Why It Matters</a>
+    </div>
+  </nav>
+
+  <div class="page-head">
+    <div class="eyebrow">For Everyone — No Tech Background Needed</div>
+    <h1>What actually happens when you join a random Wi-Fi?</h1>
+    <p>Watch the 4 steps below to see how a fake Wi-Fi hotspot can quietly read what you're doing on your phone.</p>
+  </div>
+
+  <div class="stage" id="stage">
+
+    <div class="scene active" data-step="0">
+      <div class="scene-inner">
+        <div class="device"><div class="screen">📱</div></div>
+        <div class="arrow-flow">…</div>
+        <div class="wifi-tower"><div class="waves animate"></div>📡</div>
+      </div>
+    </div>
+
+    <div class="scene" data-step="1">
+      <div class="scene-inner">
+        <div class="device"><div class="screen">📱</div></div>
+        <div class="arrow-flow safe">→</div>
+        <div class="wifi-tower hacker-tower"><div class="waves animate"></div>😈</div>
+        <div class="arrow-flow">···</div>
+        <div class="wifi-tower"><div class="waves animate"></div>📡</div>
+      </div>
+    </div>
+
+    <div class="scene" data-step="2">
+      <div class="scene-inner" style="position:relative;">
+        <div class="device"><div class="screen">📱</div></div>
+        <div class="arrow-flow danger">→</div>
+        <div class="wifi-tower hacker-tower"><div class="waves animate"></div>😈</div>
+        <div class="data-chip" style="top:20px;left:38%;animation-delay:0s;">🔑 password</div>
+        <div class="data-chip" style="top:60px;left:44%;animation-delay:0.7s;">💬 messages</div>
+        <div class="data-chip" style="top:100px;left:36%;animation-delay:1.4s;">💳 card info</div>
+      </div>
+    </div>
+
+    <div class="scene" data-step="3">
+      <div class="scene-inner">
+        <div class="device"><div class="screen">⚠️</div></div>
+        <div class="arrow-flow safe">✓</div>
+        <div style="font-family:var(--mono);font-size:13px;color:var(--safe);max-width:200px;text-align:left;">
+          WifiSecure warns you <b>before</b> you connect — and suggests a safe network instead.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="caption" id="caption">Your phone sees a Wi-Fi network nearby, like "Free_Airport_WiFi."</p>
+
+  <div class="controls">
+    <button class="ctrl-btn" id="prevBtn">← Back</button>
+    <div class="dots" id="dots"></div>
+    <button class="ctrl-btn" id="nextBtn">Next →</button>
+  </div>
+
+  <div class="section-head">Quick Glossary</div>
+  <div class="glossary">
+    <div class="g-card"><b>Evil Twin</b><span>A fake Wi-Fi hotspot made to look exactly like a real one, set up to trick your phone into connecting.</span></div>
+    <div class="g-card"><b>Man-in-the-Middle</b><span>When someone secretly sits between you and the internet, able to see what passes through.</span></div>
+    <div class="g-card"><b>Open Network</b><span>Wi-Fi with no password — anyone nearby can potentially read what's sent over it.</span></div>
+    <div class="g-card"><b>VPN</b><span>A tool that scrambles your data into a private tunnel, so even a risky network can't read it.</span></div>
+  </div>
+
+  <div class="cta">
+    <h3>See it for yourself</h3>
+    <p>Try connecting to a safe vs. risky network in our live interactive demo.</p>
+    <a href="demo.html"><button>Go to Live Demo →</button></a>
+  </div>
+
+  <footer>Illustrative animation · educational purposes only · &copy; WifiSecure student project</footer>
+</div>
+
+<script>
+const scenes = document.querySelectorAll('.scene');
+const captions = [
+  "Your phone sees a Wi-Fi network nearby, like \"Free_Airport_WiFi.\"",
+  "You connect — but this network is a fake copy (an <b>evil twin</b>) set up by someone nearby, sitting between you and the real internet.",
+  "Because the connection isn't encrypted, that person can see what you type — <b>passwords, messages, even card details.</b>",
+  "<b>WifiSecure</b> spots the warning signs first and steers you to a safe network before any of this happens."
+];
+const caption = document.getElementById('caption');
+const dotsWrap = document.getElementById('dots');
+let step = 0;
+let timer;
+
+scenes.forEach((_, i)=>{
+  const d = document.createElement('div');
+  d.className = 'dot-step' + (i===0 ? ' active' : '');
+  d.onclick = ()=> goTo(i);
+  dotsWrap.appendChild(d);
+});
+const dotEls = dotsWrap.querySelectorAll('.dot-step');
+
+function goTo(i){
+  step = i;
+  scenes.forEach(s => s.classList.remove('active'));
+  scenes[step].classList.add('active');
+  dotEls.forEach(d => d.classList.remove('active'));
+  dotEls[step].classList.add('active');
+  caption.innerHTML = captions[step];
+  restartAuto();
+}
+
+function next(){ goTo((step + 1) % scenes.length); }
+function prev(){ goTo((step - 1 + scenes.length) % scenes.length); }
+
+document.getElementById('nextBtn').onclick = next;
+document.getElementById('prevBtn').onclick = prev;
+
+function restartAuto(){
+  clearInterval(timer);
+  timer = setInterval(next, 4500);
+}
+restartAuto();
+</script>
+</body>
+</html>
