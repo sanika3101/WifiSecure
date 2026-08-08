@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WifiSecure — Real Trained Model</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0F1E; --panel:#121A2C; --panel-alt:#1A2338; --grid:#212C46;
+    --text:#EDF1F7; --muted:#7E8AA6;
+    --safe:#35D0B0; --safe-dim: rgba(53,208,176,0.14);
+    --danger:#FF5D5D; --danger-dim: rgba(255,93,93,0.16);
+    --mono: 'JetBrains Mono', monospace; --sans: 'Inter', sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:radial-gradient(ellipse 900px 500px at 50% -10%, rgba(53,208,176,0.08), transparent 60%), var(--bg);
+    color:var(--text); font-family:var(--sans); -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+  .wrap{max-width:900px;margin:0 auto;padding:0 24px 70px;}
+  nav{display:flex;align-items:center;justify-content:space-between;padding:22px 0;border-bottom:1px solid var(--grid);margin-bottom:10px;}
+  .logo{font-family:var(--mono);font-weight:700;font-size:15px;display:flex;align-items:center;gap:10px;}
+  .logo .dot{width:9px;height:9px;border-radius:50%;background:var(--safe);box-shadow:0 0 0 4px var(--safe-dim);animation:pulse 2.2s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 4px var(--safe-dim);}50%{box-shadow:0 0 0 8px transparent;}}
+  .nav-links{display:flex;gap:26px;}
+  .nav-links a{font-family:var(--sans);font-size:14px;font-weight:500;color:var(--muted);text-decoration:none;padding-bottom:4px;border-bottom:2px solid transparent;transition:color 0.2s ease;}
+  .nav-links a:hover{color:var(--text);}
+  .nav-links a.active{color:var(--safe);border-bottom-color:var(--safe);}
+
+  .page-head{padding:44px 0 10px;text-align:center;}
+  .eyebrow{font-family:var(--mono);color:var(--safe);font-size:12px;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:14px;}
+  h1{font-size:30px;margin:0 0 14px;font-weight:700;}
+  .page-head p{color:var(--muted);font-size:15px;max-width:560px;margin:0 auto;line-height:1.6;}
+
+  .note{
+    font-family:var(--mono);font-size:12px;color:var(--muted);
+    background:var(--panel);border:1px solid var(--grid);border-radius:10px;
+    padding:14px 18px;margin:28px 0;line-height:1.7;
+  }
+  .note b{color:var(--safe);}
+
+  .samples{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px;}
+  .sample-card{background:var(--panel);border:1px solid var(--grid);border-radius:14px;padding:22px;display:flex;flex-direction:column;}
+  .sample-card h3{margin:0 0 6px;font-size:16px;}
+  .sample-card p{margin:0 0 16px;color:var(--muted);font-size:13px;line-height:1.5;}
+  .run-btn{
+    margin-top:auto;font-family:var(--sans);font-weight:600;font-size:14px;
+    border:none;border-radius:8px;padding:12px 0;cursor:pointer;transition:transform 0.15s ease;
+  }
+  .run-btn:hover{transform:translateY(-1px);}
+  .run-btn.normal-btn{background:var(--safe);color:#04211C;}
+  .run-btn.attack-btn{background:var(--panel-alt);color:var(--text);border:1px solid var(--grid);}
+  .run-btn.attack-btn:hover{border-color:var(--danger);color:var(--danger);}
+
+  .result-panel{
+    border-radius:14px;padding:24px;min-height:70px;border:1px solid var(--grid);
+    background:var(--panel);margin-bottom:40px;transition:all 0.3s ease;
+  }
+  .result-panel.idle{color:var(--muted);font-size:14px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);}
+  .result-panel.safe{background:var(--safe-dim);border-color:rgba(53,208,176,0.4);}
+  .result-panel.danger{background:var(--danger-dim);border-color:rgba(255,93,93,0.4);}
+  .result-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:16px;font-weight:700;}
+  .result-panel.safe .result-head{color:var(--safe);}
+  .result-panel.danger .result-head{color:var(--danger);}
+  .scores{font-family:var(--mono);font-size:12.5px;color:var(--text);line-height:1.8;}
+  .scores b{color:var(--muted);font-weight:500;}
+
+  .section-head{font-family:var(--mono);font-size:13px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin:0 0 18px;}
+  footer{border-top:1px solid var(--grid);padding:26px 0 0;margin-top:20px;font-family:var(--mono);font-size:11.5px;color:var(--muted);text-align:center;}
+
+  @media (max-width:640px){ .samples{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav>
+    <div class="logo"><span class="dot"></span> WIFISECURE</div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="demo.html">Live Demo</a>
+      <a href="learn.html">Why It Matters</a>
+      <a href="model.html" class="active">AI Model</a>
+    </div>
+  </nav>
+
+  <div class="page-head">
+    <div class="eyebrow">This Is The Real Thing</div>
+    <h1>Our actual trained AI model, running live</h1>
+    <p>Unlike the earlier demo (which used scripted example data), this page runs the real machine learning model we trained — converted to JavaScript so it can run directly in your browser.</p>
+  </div>
+
+  <div class="note">
+    <b>How this was made:</b> a Random Forest model was trained in Python on real captured Wi-Fi traffic (AWID3 dataset — Evil Twin + Rogue AP attacks), then converted to JavaScript so it can run here with no server needed. The two samples below are real captured data rows the model has never been specifically shown before during training evaluation.
+  </div>
+
+  <div class="section-head">Try it with real captured samples</div>
+  <div class="samples">
+    <div class="sample-card">
+      <h3>Sample A — Normal Traffic</h3>
+      <p>A real captured Wi-Fi frame from ordinary network activity.</p>
+      <button class="run-btn normal-btn" onclick="runModel('normal')">Run Model on Sample A</button>
+    </div>
+    <div class="sample-card">
+      <h3>Sample B — Rogue AP Attack</h3>
+      <p>A real captured Wi-Fi frame from a labeled Rogue AP attack session.</p>
+      <button class="run-btn attack-btn" onclick="runModel('attack')">Run Model on Sample B</button>
+    </div>
+  </div>
+
+  <div class="result-panel idle" id="resultPanel">
+    click a button above to run the real model
+  </div>
+
+  <footer>Model: Random Forest, trained on AWID3 captured Wi-Fi data · runs entirely in your browser · &copy; WifiSecure student project</footer>
+</div>
+
+<!-- The converted trained model -->
+<script src="wifiguard_model.js"></script>
+<script>
+// Real captured feature rows from the test set (see README for column order)
+const sampleNormal = [23.0, 76.0, 9.4e-05, 9.4e-05, 1608316886.0, 483.646436, 0.0, 1.0, 5180.0, 24.0, -115.0, 56.0, 0.0, 0.0, 186.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 11.0, 28.0, 2.0, 36.0, 24.0, 22321011135.0, 5180.0, -37.0, 22321011107.0, 5.0, 22321011135.0];
+const sampleAttack = [23.0, 263.0, 0.00128, 0.00128, 1608316901.0, 498.678431, 0.0, 1.0, 5180.0, 6.0, -123.0, 56.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 8.0, 300.0, 2.0, 36.0, 6.0, 22336042689.0, 5180.0, -40.0, 22336042389.0, 5.0, 22336042689.0];
+
+const resultPanel = document.getElementById('resultPanel');
+
+function runModel(which){
+  const input = which === 'normal' ? sampleNormal : sampleAttack;
+  const output = score(input); // score() comes from wifiguard_model.js
+  const predictedClass = output[1] > output[0] ? 1 : 0;
+
+  if(predictedClass === 0){
+    resultPanel.className = 'result-panel safe';
+    resultPanel.innerHTML = `
+      <div class="result-head">✓ Model prediction: Normal</div>
+      <div class="scores">
+        <b>Raw model output:</b> [normal: ${output[0].toFixed(3)}, suspicious: ${output[1].toFixed(3)}]<br>
+        <b>Input sample:</b> ${which === 'normal' ? 'Sample A (Normal Traffic)' : 'Sample B (Rogue AP Attack)'}
+      </div>
+    `;
+  } else {
+    resultPanel.className = 'result-panel danger';
+    resultPanel.innerHTML = `
+      <div class="result-head">⚠ Model prediction: Suspicious / Attack</div>
+      <div class="scores">
+        <b>Raw model output:</b> [normal: ${output[0].toFixed(3)}, suspicious: ${output[1].toFixed(3)}]<br>
+        <b>Input sample:</b> ${which === 'normal' ? 'Sample A (Normal Traffic)' : 'Sample B (Rogue AP Attack)'}
+      </div>
+    `;
+  }
+}
+</script>
+</body>
+</html>
