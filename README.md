@@ -22,6 +22,13 @@ This repository currently contains the **website demo** — a browser cannot sca
 - [ ] Add crowd-sourced trusted-network history
 - [ ] Add auto-VPN prompt on detected risk
 
+## Model Training Notes
+
+A first Random Forest model was trained on AWID3 data (Evil_Twin + Rogue_AP capture files), combining normal and attack-labeled Wi-Fi frames.
+
+- **Data leakage caught and fixed:** the first version of the model scored a suspicious 100% — investigation showed it had learned to recognize one specific device's MAC address (`wlan.ra`) rather than real attack behavior, since all attack rows in that capture happened to come from the same device. This column (and other identifier/raw-timestamp columns) was removed before retraining.
+- **Known limitation:** even after the fix, the model still scores very highly on this dataset. This is expected — the data was captured in a controlled lab setup using one specific attack tool, with a small number of attack examples (166 rows, 33 in the test set). This means the model reliably recognizes *this particular attack signature*, but hasn't yet been proven against more diverse, real-world rogue AP/evil twin behavior. Testing on additional capture sessions is a clear next step before treating this as production-ready.
+
 ## Tech Stack
 
 - **Website:** HTML, CSS, JavaScript
