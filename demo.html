@@ -1,580 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WiFiGuard — Demo</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>WifiSecure — Risk Analysis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#0A0F1E;
-    --panel:#121A2C;
-    --panel-alt:#1A2338;
-    --grid:#212C46;
-    --text:#EDF1F7;
-    --muted:#7E8AA6;
-    --safe:#35D0B0;
-    --safe-dim: rgba(53,208,176,0.14);
-    --warn:#F2A93B;
-    --warn-dim: rgba(242,169,59,0.14);
-    --danger:#FF5D5D;
-    --danger-dim: rgba(255,93,93,0.16);
-    --mono: 'JetBrains Mono', monospace;
-    --sans: 'Inter', sans-serif;
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    background:
-      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(53,208,176,0.08), transparent 60%),
-      var(--bg);
-    color:var(--text);
-    font-family:var(--sans);
-    -webkit-font-smoothing:antialiased;
-  }
-  a{color:inherit;}
+:root{--bg:#0A0F1E;--panel:#121A2C;--panel2:#1A2338;--grid:#212C46;--text:#EDF1F7;--muted:#7E8AA6;--safe:#35D0B0;--safeD:rgba(53,208,176,.14);--warn:#F2A93B;--warnD:rgba(242,169,59,.14);--danger:#FF5D5D;--dangerD:rgba(255,93,93,.14);--mono:'JetBrains Mono',monospace;--sans:'Inter',sans-serif}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse 900px 500px at 50% -10%,rgba(53,208,176,.08),transparent 60%),var(--bg);color:var(--text);font-family:var(--sans)}.wrap{max-width:1080px;margin:auto;padding:0 24px}nav{display:flex;justify-content:space-between;align-items:center;padding:22px 0;border-bottom:1px solid var(--grid)}.logo{font:700 15px var(--mono);display:flex;gap:10px;align-items:center}.logo span{width:9px;height:9px;border-radius:50%;background:var(--safe);box-shadow:0 0 0 4px var(--safeD)}.nav-links{display:flex;gap:24px}.nav-links a{color:var(--muted);text-decoration:none;font-size:14px}.nav-links a:hover,.nav-links .active{color:var(--safe)}
+header{padding:45px 0 25px}.eyebrow{font:12px var(--mono);color:var(--safe);letter-spacing:.13em;text-transform:uppercase}h1{font-size:36px;margin:10px 0}.sub{color:var(--muted);line-height:1.6;max-width:720px}.demo-banner{margin:18px 0;padding:12px 15px;border:1px solid var(--grid);background:var(--panel);border-radius:10px;font:12px var(--mono);color:var(--muted)}.section-title{font:700 14px var(--mono);letter-spacing:.08em;text-transform:uppercase;margin:34px 0 14px}.networks{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.network{background:var(--panel);border:1px solid var(--grid);border-radius:14px;padding:18px;cursor:pointer;transition:.2s}.network:hover,.network.selected{border-color:var(--safe);transform:translateY(-2px)}.network h3{margin:0 0 6px;font-size:15px}.meta{font:11px var(--mono);color:var(--muted);line-height:1.7}.badge{display:inline-block;margin-top:12px;padding:5px 8px;border-radius:6px;font:700 10px var(--mono)}.low{background:var(--safeD);color:var(--safe)}.medium{background:var(--warnD);color:var(--warn)}.high{background:var(--dangerD);color:var(--danger)}.twin{background:rgba(255,93,93,.2);color:var(--danger)}
+#analysis{display:none;margin-top:24px}.topgrid{display:grid;grid-template-columns:300px 1fr;gap:18px}.card{background:var(--panel);border:1px solid var(--grid);border-radius:15px;padding:22px}.score-card{text-align:center}.score-ring{width:170px;height:170px;margin:8px auto 18px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:conic-gradient(var(--safe) 0deg,#25304a 0deg);position:relative}.score-ring:after{content:'';position:absolute;inset:12px;border-radius:50%;background:var(--panel)}.score-number{position:relative;z-index:1;font:700 32px var(--mono)}.score-label{font:700 12px var(--mono);letter-spacing:.08em}.confidence{color:var(--muted);font-size:12px;margin-top:10px}.confidence b{color:var(--text)}.headrow{display:flex;justify-content:space-between;align-items:flex-start;gap:15px}.headrow h2{margin:0 0 5px;font-size:23px}.small{font:11px var(--mono);color:var(--muted)}h3{font-size:14px;margin:0 0 14px}.reasons{display:grid;gap:8px}.reason{display:flex;justify-content:space-between;gap:15px;padding:10px 12px;background:var(--panel2);border-radius:8px;font-size:12px}.plus{color:var(--danger);font-family:var(--mono)}.minus{color:var(--safe);font-family:var(--mono)}.details{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.detail{padding:12px;background:var(--panel2);border-radius:8px}.detail label{display:block;color:var(--muted);font:10px var(--mono);text-transform:uppercase;margin-bottom:5px}.detail span{font-size:12px;word-break:break-word}.recommend{margin-top:18px;border-radius:12px;padding:17px;background:var(--safeD);border:1px solid rgba(53,208,176,.25);font-size:13px;line-height:1.6}.recommend.medium{background:var(--warnD);border-color:rgba(242,169,59,.25)}.recommend.high{background:var(--dangerD);border-color:rgba(255,93,93,.25)}.evil{margin-top:18px}.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px}.compare-box{background:var(--panel2);padding:15px;border-radius:10px;font-size:12px;line-height:1.8}.match{color:var(--safe)}.mismatch{color:var(--danger)}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.btn{border:1px solid var(--grid);background:var(--panel2);color:var(--text);padding:11px 15px;border-radius:8px;cursor:pointer;font-weight:600}.btn.primary{background:var(--safe);border-color:var(--safe);color:#04211C}.btn.danger{color:var(--danger)}.history-row{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--grid);font-size:12px}.history-row:last-child{border:0}.empty{color:var(--muted);font-size:12px}.edu{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:50px}.edu p{color:var(--muted);font-size:13px;line-height:1.7}.flow{display:flex;gap:7px;flex-wrap:wrap;align-items:center}.flow span{padding:8px 10px;background:var(--panel2);border-radius:7px;font:11px var(--mono)}footer{border-top:1px solid var(--grid);padding:25px 0 45px;color:var(--muted);font:11px/1.7 var(--mono);text-align:center}
+@media(max-width:850px){.networks{grid-template-columns:repeat(2,1fr)}.topgrid,.edu{grid-template-columns:1fr}}@media(max-width:600px){.wrap{padding:0 15px}.nav-links{gap:10px}.nav-links a{font-size:11px}.networks,.details,.compare{grid-template-columns:1fr}h1{font-size:29px}}
+</style></head>
+<body><div class="wrap">
+<nav><div class="logo"><span></span>WIFISECURE</div><div class="nav-links"><a href="index.html">Home</a><a class="active" href="demo.html">Analyze</a><a href="learn.html">Learn</a><a href="model.html">AI Model</a></div></nav>
+<header><div class="eyebrow">Simulated Wi-Fi Analysis</div><h1>How risky is this Wi-Fi?</h1><p class="sub">Select a demo network to calculate a transparent 0–100 risk score, understand why it was flagged, inspect its network details, and check for possible Evil Twin behavior.</p><div class="demo-banner">DEMO MODE — Browser-based Wi-Fi scanning is simulated. This page does not perform real network attacks or scan nearby access points.</div></header>
 
-  .wrap{max-width:1040px;margin:0 auto;padding:0 24px;}
-
-  /* NAV */
-  nav{
-    display:flex;align-items:center;justify-content:space-between;
-    padding:22px 0;
-    border-bottom:1px solid var(--grid);
-  }
-  .logo{
-    font-family:var(--mono);
-    font-weight:700;
-    letter-spacing:0.02em;
-    font-size:15px;
-    display:flex;align-items:center;gap:10px;
-  }
-  .logo .dot{
-    width:9px;height:9px;border-radius:50%;background:var(--safe);
-    box-shadow:0 0 0 4px var(--safe-dim);
-    animation:pulse 2.2s ease-in-out infinite;
-  }
-  @keyframes pulse{
-    0%,100%{box-shadow:0 0 0 4px var(--safe-dim);}
-    50%{box-shadow:0 0 0 8px transparent;}
-  }
-  .status-pill{
-    font-family:var(--mono);
-    font-size:11px;
-    color:var(--muted);
-    border:1px solid var(--grid);
-    padding:6px 12px;
-    border-radius:20px;
-    letter-spacing:0.04em;
-  }
-  .nav-links{display:flex;gap:26px;}
-  .nav-links a{
-    font-family:var(--sans);
-    font-size:14px;
-    font-weight:500;
-    color:var(--muted);
-    text-decoration:none;
-    padding-bottom:4px;
-    border-bottom:2px solid transparent;
-    transition:color 0.2s ease;
-  }
-  .nav-links a:hover{color:var(--text);}
-  .nav-links a.active{color:var(--safe);border-bottom-color:var(--safe);}
-
-  /* HERO */
-  .hero{
-    display:grid;
-    grid-template-columns:1fr 320px;
-    gap:48px;
-    align-items:center;
-    padding:56px 0 40px;
-  }
-  .eyebrow{
-    font-family:var(--mono);
-    color:var(--safe);
-    font-size:12px;
-    letter-spacing:0.14em;
-    text-transform:uppercase;
-    margin-bottom:14px;
-  }
-  h1{
-    font-size:40px;
-    line-height:1.15;
-    margin:0 0 16px;
-    font-weight:700;
-    letter-spacing:-0.01em;
-  }
-  .hero p{
-    color:var(--muted);
-    font-size:16px;
-    line-height:1.6;
-    max-width:480px;
-    margin:0 0 24px;
-  }
-  .hero-note{
-    font-family:var(--mono);
-    font-size:12px;
-    color:var(--muted);
-    border-left:2px solid var(--grid);
-    padding-left:12px;
-  }
-
-  /* RADAR */
-  .radar-box{
-    position:relative;
-    width:280px;height:280px;
-    justify-self:center;
-  }
-  .radar{
-    width:100%;height:100%;
-    border-radius:50%;
-    position:relative;
-    background:
-      repeating-radial-gradient(circle, transparent 0, transparent 34px, var(--grid) 35px),
-      var(--panel);
-    border:1px solid var(--grid);
-    overflow:hidden;
-  }
-  .radar::before, .radar::after{
-    content:'';
-    position:absolute;
-    background:var(--grid);
-  }
-  .radar::before{ left:0;right:0;top:50%;height:1px; }
-  .radar::after{ top:0;bottom:0;left:50%;width:1px; }
-  .sweep{
-    position:absolute;
-    top:0;left:0;width:100%;height:100%;
-    border-radius:50%;
-    background:conic-gradient(from 0deg, rgba(53,208,176,0.55), transparent 70deg);
-    animation:spin 3.4s linear infinite;
-    transform-origin:50% 50%;
-  }
-  @keyframes spin{ to{ transform:rotate(360deg); } }
-  .blip{
-    position:absolute;
-    width:9px;height:9px;
-    border-radius:50%;
-    transform:translate(-50%,-50%);
-    opacity:0;
-  }
-  .blip .ring{
-    position:absolute;inset:-6px;
-    border-radius:50%;
-    border:1px solid currentColor;
-    opacity:0.5;
-  }
-  .radar-label{
-    position:absolute;
-    bottom:-30px;left:0;right:0;
-    text-align:center;
-    font-family:var(--mono);
-    font-size:11px;
-    color:var(--muted);
-  }
-
-  /* ALERT */
-  .alert{
-    display:flex;align-items:center;gap:12px;
-    background:var(--danger-dim);
-    border:1px solid rgba(255,93,93,0.35);
-    color:#FFD3D3;
-    padding:14px 18px;
-    border-radius:10px;
-    font-size:14px;
-    margin-bottom:28px;
-    opacity:0;
-    transform:translateY(-6px);
-    transition:opacity 0.5s ease, transform 0.5s ease;
-  }
-  .alert.show{opacity:1;transform:translateY(0);}
-  .alert b{color:#fff;}
-  .alert-icon{font-family:var(--mono);font-weight:700;}
-
-  /* SECTION HEADER */
-  .section-head{
-    display:flex;align-items:baseline;justify-content:space-between;
-    margin:8px 0 18px;
-  }
-  .section-head h2{
-    font-size:13px;
-    font-family:var(--mono);
-    text-transform:uppercase;
-    letter-spacing:0.1em;
-    color:var(--muted);
-    margin:0;
-    font-weight:500;
-  }
-  .section-head span{
-    font-family:var(--mono);
-    font-size:12px;
-    color:var(--muted);
-  }
-
-  /* NETWORK CARDS */
-  .networks{
-    display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(280px,1fr));
-    gap:14px;
-    margin-bottom:44px;
-  }
-  .card{
-    background:var(--panel);
-    border:1px solid var(--grid);
-    border-radius:12px;
-    padding:18px;
-    opacity:0;
-    transform:translateY(10px);
-    transition:opacity 0.5s ease, transform 0.5s ease;
-  }
-  .card.show{opacity:1;transform:translateY(0);}
-  .card-top{
-    display:flex;justify-content:space-between;align-items:flex-start;
-    margin-bottom:14px;
-  }
-  .ssid{font-weight:600;font-size:15px;margin:0 0 4px;}
-  .meta{
-    font-family:var(--mono);
-    font-size:11px;
-    color:var(--muted);
-  }
-  .risk-ring{
-    width:46px;height:46px;
-    border-radius:50%;
-    display:flex;align-items:center;justify-content:center;
-    font-family:var(--mono);
-    font-weight:700;
-    font-size:13px;
-    flex-shrink:0;
-  }
-  .risk-ring.safe{background:var(--safe-dim); color:var(--safe); border:1px solid rgba(53,208,176,0.4);}
-  .risk-ring.warn{background:var(--warn-dim); color:var(--warn); border:1px solid rgba(242,169,59,0.4);}
-  .risk-ring.danger{background:var(--danger-dim); color:var(--danger); border:1px solid rgba(255,93,93,0.4);}
-  .reason{
-    font-size:13px;
-    color:var(--muted);
-    line-height:1.5;
-    border-top:1px solid var(--grid);
-    padding-top:12px;
-  }
-  .reason b{color:var(--text);font-weight:500;}
-  .card-connect{
-    margin-top:14px;
-    width:100%;
-    font-family:var(--sans);
-    font-weight:600;
-    font-size:13px;
-    border-radius:7px;
-    padding:10px 0;
-    cursor:pointer;
-    transition:transform 0.15s ease;
-  }
-  .card-connect:hover{transform:translateY(-1px);}
-  .card-connect.safe{background:var(--safe);color:#04211C;border:none;}
-  .card-connect.risky{background:var(--panel-alt);color:var(--text);border:1px solid var(--grid);}
-  .card-connect.risky:hover{border-color:var(--danger);color:var(--danger);}
-
-  .result-panel{
-    border-radius:14px;
-    padding:22px 24px;
-    margin-bottom:28px;
-    border:1px solid var(--grid);
-    background:var(--panel);
-    display:none;
-  }
-  .result-panel.show{display:block;}
-  .result-panel.safe{background:var(--safe-dim);border-color:rgba(53,208,176,0.4);}
-  .result-panel.danger{background:var(--danger-dim);border-color:rgba(255,93,93,0.4);}
-  .result-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:16px;font-weight:700;}
-  .result-panel.safe .result-head{color:var(--safe);}
-  .result-panel.danger .result-head{color:var(--danger);}
-  .result-panel ul{margin:0;padding-left:18px;font-size:13.5px;line-height:1.8;color:var(--text);}
-  .result-suggest{
-    margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.08);
-    display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:13px;
-  }
-  .result-suggest button{
-    font-family:var(--sans);font-weight:600;font-size:13px;
-    background:var(--safe);color:#04211C;border:none;border-radius:7px;
-    padding:9px 16px;cursor:pointer;
-  }
-  .badge{
-    display:inline-block;
-    font-family:var(--mono);
-    font-size:10px;
-    letter-spacing:0.04em;
-    padding:3px 8px;
-    border-radius:5px;
-    margin-top:8px;
-  }
-  .badge.safe{background:var(--safe-dim);color:var(--safe);}
-  .badge.warn{background:var(--warn-dim);color:var(--warn);}
-  .badge.danger{background:var(--danger-dim);color:var(--danger);}
-
-  /* RECOMMENDED */
-  .recommend{
-    background:linear-gradient(135deg, var(--panel-alt), var(--panel));
-    border:1px solid rgba(53,208,176,0.3);
-    border-radius:14px;
-    padding:22px 24px;
-    display:flex;justify-content:space-between;align-items:center;
-    gap:20px;
-    margin-bottom:52px;
-    flex-wrap:wrap;
-  }
-  .recommend .label{
-    font-family:var(--mono);
-    font-size:11px;
-    color:var(--safe);
-    text-transform:uppercase;
-    letter-spacing:0.1em;
-    margin-bottom:6px;
-  }
-  .recommend h3{margin:0 0 4px;font-size:18px;}
-  .recommend p{margin:0;color:var(--muted);font-size:13px;}
-  .btn{
-    font-family:var(--sans);
-    font-weight:600;
-    font-size:14px;
-    background:var(--safe);
-    color:#04211C;
-    border:none;
-    padding:12px 22px;
-    border-radius:8px;
-    cursor:pointer;
-    white-space:nowrap;
-    transition:transform 0.15s ease, box-shadow 0.15s ease;
-  }
-  .btn:hover{transform:translateY(-1px); box-shadow:0 6px 18px rgba(53,208,176,0.25);}
-  .btn:focus-visible{outline:2px solid #fff;outline-offset:2px;}
-
-  /* HOW IT WORKS */
-  .how{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:20px;
-    margin-bottom:56px;
-  }
-  .how-step{
-    padding:20px 0;
-    border-top:1px solid var(--grid);
-  }
-  .how-step .num{
-    font-family:var(--mono);
-    color:var(--safe);
-    font-size:12px;
-    margin-bottom:10px;
-    display:block;
-  }
-  .how-step h4{margin:0 0 8px;font-size:15px;}
-  .how-step p{margin:0;color:var(--muted);font-size:13px;line-height:1.55;}
-
-  footer{
-    border-top:1px solid var(--grid);
-    padding:26px 0 50px;
-    font-family:var(--mono);
-    font-size:11.5px;
-    color:var(--muted);
-    line-height:1.7;
-  }
-  footer b{color:var(--text);}
-
-  @media (max-width:760px){
-    .hero{grid-template-columns:1fr;}
-    .radar-box{width:220px;height:220px;justify-self:start;}
-    h1{font-size:30px;}
-    .how{grid-template-columns:1fr;}
-  }
-  @media (prefers-reduced-motion: reduce){
-    .sweep, .dot{animation:none;}
-  }
-</style>
-</head>
-<body>
-<div class="wrap">
-
-  <nav>
-    <div class="logo"><span class="dot"></span> WIFISECURE</div>
-    <div class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="demo.html" class="active">Live Demo</a>
-      <a href="learn.html">Why It Matters</a>
-      <a href="model.html">AI Model</a>
-    </div>
-  </nav>
-
-  <div class="hero">
-    <div>
-      <div class="eyebrow">Wi-Fi Safety Scanner — Concept Demo</div>
-      <h1>Know which network to trust before you connect.</h1>
-      <p>WiFiGuard scans nearby Wi-Fi networks, scores each one for risk using a trained model, and points you to the safest option nearby — instead of leaving you to guess.</p>
-      <div class="hero-note">This page simulates the scan for demo purposes.<br>The real app will use on-device Wi-Fi metadata + a trained ML model.<br>Try clicking "Connect" on any network below.</div>
-    </div>
-    <div class="radar-box">
-      <div class="radar" id="radar">
-        <div class="sweep"></div>
-      </div>
-      <div class="radar-label" id="radarLabel">scanning nearby networks…</div>
-    </div>
-  </div>
-
-  <div class="alert" id="alertBanner">
-    <span class="alert-icon">⚠</span>
-    <div><b>Suspicious network detected</b> — "Airport_Free_WiFi" is broadcasting from two different devices nearby. Avoid entering passwords or payment info.</div>
-  </div>
-
-  <div class="section-head">
-    <h2>Detected Networks</h2>
-    <span id="scanCount">0 / 4 found</span>
-  </div>
-  <div class="networks" id="networks"></div>
-
-  <div class="result-panel" id="resultPanel"></div>
-
-  <div class="recommend">
-    <div>
-      <div class="label">Recommended</div>
-      <h3>Cafe_Brew_Guest</h3>
-      <p>WPA3 secured · seen safely 128 times at this location · low risk</p>
-    </div>
-    <button class="btn" onclick="handleConnect(0)">Connect Safely</button>
-  </div>
-
-  <div class="section-head"><h2>How It Works</h2></div>
-  <div class="how">
-    <div class="how-step">
-      <span class="num">01</span>
-      <h4>Scan &amp; fingerprint</h4>
-      <p>App reads SSID, MAC address, signal strength, and security type for every nearby network.</p>
-    </div>
-    <div class="how-step">
-      <span class="num">02</span>
-      <h4>Score with ML</h4>
-      <p>A model trained on labeled Wi-Fi attack data (AWID/AWID3) flags duplicate names, weak encryption, and odd signal behavior.</p>
-    </div>
-    <div class="how-step">
-      <span class="num">03</span>
-      <h4>Guide &amp; protect</h4>
-      <p>You get a plain-language reason for the score, a safer alternative nearby, and a prompt to enable a VPN if needed.</p>
-    </div>
-  </div>
-
-  <footer>
-    <b>Project note:</b> this is a UI/concept demo built for faculty review.<br>
-    Network data shown above is simulated — the live version will request Wi-Fi scan permission on-device.<br>
-    &copy; WiFiGuard student project.
-  </footer>
-
+<div id="networks"><div class="section-title">Available demo networks</div><div class="networks" id="networkGrid"></div></div>
+<section id="analysis">
+<div class="section-title">WifiSecure analysis</div>
+<div class="topgrid">
+<div class="card score-card"><div class="small">RISK SCORE</div><div class="score-ring" id="scoreRing"><div class="score-number" id="scoreNumber">0</div></div><div class="score-label" id="scoreLabel">—</div><div class="confidence">Analysis confidence: <b id="confidence">—</b></div></div>
+<div class="card"><div class="headrow"><div><h2 id="selectedName">Network</h2><div class="small" id="selectedDesc"></div></div><span class="badge" id="topBadge"></span></div><div class="section-title" style="margin-top:22px">Why we flagged this network</div><div class="reasons" id="reasons"></div><div class="section-title">Risk factor weights</div><div class="reasons" id="weights"></div></div>
 </div>
+<div class="card" style="margin-top:18px"><div class="section-title" style="margin-top:0">Network details</div><div class="details" id="details"></div></div>
+<div class="card evil"><div class="section-title" style="margin-top:0">Evil Twin check</div><div id="evilTwin"></div></div>
+<div class="recommend" id="recommendation"></div>
+<div class="actions"><button class="btn primary" onclick="saveCurrent()">Save to Scan History</button><button class="btn" onclick="simulateTwin()">Simulate Evil Twin</button><button class="btn" onclick="compareNetworks()">Compare Networks</button><button class="btn" onclick="scanAgain()">Scan Again</button></div>
+</section>
 
+<div class="section-title">Scan history</div><div class="card" id="history"><div class="empty">No scans saved yet.</div></div><div class="actions"><button class="btn danger" onclick="clearHistory()">Clear History</button></div>
+
+<div class="section-title">How WifiSecure works</div><div class="edu"><div class="card"><h3>Risk analysis flow</h3><div class="flow"><span>Wi-Fi information</span>→<span>Feature extraction</span>→<span>Risk engine</span>→<span>Prediction</span>→<span>Explanation</span>→<span>Recommendation</span></div><p>The current dashboard uses transparent rules for the demo. A future ML classifier can augment this engine when validated on broader data.</p></div><div class="card"><h3>What can this network see?</h3><p><b>Without HTTPS:</b> some web activity and data may be exposed depending on the application.</p><p><b>With HTTPS:</b> website content and credentials are encrypted in transit. HTTPS protects the application connection; it does not prove that the Wi-Fi network itself is trustworthy.</p><p><b>VPN:</b> a trusted VPN can encrypt traffic between your device and the VPN server, but it does not prove the Wi-Fi is legitimate.</p></div></div>
+
+<footer>WifiSecure provides a risk assessment based on available indicators. It cannot guarantee that a network is completely safe. Always verify trusted networks independently and use HTTPS and other security best practices.<br><br>All Wi-Fi data and Evil Twin behavior on this page are simulated for educational purposes.</footer>
+</div>
 <script>
-const networks = [
-  {ssid:"Cafe_Brew_Guest", mac:"3C:5A:B4:1F:22:0E", security:"WPA3", risk:8, level:"safe", angle:35, reason:"<b>Low risk.</b> WPA3 encrypted, single consistent MAC address, seen safely at this location many times before."},
-  {ssid:"Airport_Free_WiFi", mac:"A2:11:9C:44:BB:02", security:"Open", risk:88, level:"danger", angle:130, reason:"<b>High risk.</b> Same network name broadcasting from a second MAC address (A2:11:9C:44:BB:02 vs registered 88:0F:...) — classic evil twin pattern, and no password required."},
-  {ssid:"Home_Router_5G", mac:"7E:20:31:9A:C4:10", security:"WPA2", risk:22, level:"warn", angle:210, reason:"<b>Moderate risk.</b> WPA2 is still reasonably secure but older than WPA3. First time this network has been seen by any user in our trust database."},
-  {ssid:"FreePublicWiFi", mac:"00:1A:2B:3C:4D:5E", security:"Open", risk:74, level:"danger", angle:290, reason:"<b>High risk.</b> Open network with no encryption at all — anyone nearby can read unencrypted traffic on this connection."}
+const networks=[
+{ssid:"Campus_WiFi",bssid:"AA:BB:CC:11:22:33",security:"WPA2",auth:"Enterprise",signal:-48,frequency:"5 GHz",channel:36,type:"Infrastructure",known:true,similar:false,captive:false,cert:false,unexpected:false,twin:false,desc:"Known campus access point"},
+{ssid:"Library_WiFi",bssid:"10:22:33:44:55:66",security:"WPA3",auth:"SAE",signal:-55,frequency:"5 GHz",channel:40,type:"Infrastructure",known:true,similar:false,captive:false,cert:false,unexpected:false,twin:false,desc:"Known library network"},
+{ssid:"Cafe_Free_WiFi",bssid:"20:31:42:53:64:75",security:"Open",auth:"None",signal:-62,frequency:"2.4 GHz",channel:6,type:"Infrastructure",known:false,similar:false,captive:true,cert:false,unexpected:false,twin:false,desc:"Public network with captive portal"},
+{ssid:"Campus_WiFi",bssid:"77:88:99:44:55:66",security:"Open",auth:"None",signal:-39,frequency:"2.4 GHz",channel:1,type:"Infrastructure",known:false,similar:true,captive:true,cert:true,unexpected:true,twin:true,desc:"Suspicious copy of a known SSID"}
 ];
+let selected=null, simulatedTwin=false;
 
-const radar = document.getElementById('radar');
-const container = document.getElementById('networks');
-const alertBanner = document.getElementById('alertBanner');
-const scanCount = document.getElementById('scanCount');
-const radarLabel = document.getElementById('radarLabel');
-
-function polarToXY(angleDeg, radiusPct){
-  const rad = (angleDeg - 90) * Math.PI/180;
-  const x = 50 + radiusPct * Math.cos(rad);
-  const y = 50 + radiusPct * Math.sin(rad);
-  return [x,y];
+function analyze(n){
+let factors=[], risk=0;
+if(n.security==="WPA3"){risk-=18;factors.push(["WPA3 encryption","-18","good"])}
+else if(n.security==="WPA2"){risk-=15;factors.push(["WPA2 encryption","-15","good"])}
+else{risk+=28;factors.push(["Open network — no Wi-Fi encryption","+28","bad"])}
+if(n.known){risk-=18;factors.push(["Known access point","-18","good"])}else{risk+=16;factors.push(["Unknown access point","+16","bad"])}
+if(n.auth==="Enterprise"){risk-=10;factors.push(["Enterprise authentication","-10","good"])}
+else if(n.auth==="SAE"){risk-=7;factors.push(["Modern SAE authentication","-7","good"])}
+else{risk+=8;factors.push(["No network authentication","+8","bad"])}
+if(n.signal>-50){risk-=5;factors.push(["Strong signal","-5","good"])}
+else if(n.signal<-75){risk+=4;factors.push(["Very weak signal","+4","bad"])}
+if(n.similar){risk+=14;factors.push(["SSID resembles a trusted network","+14","bad"])}
+if(n.unexpected){risk+=10;factors.push(["Unexpected access point change","+10","bad"])}
+if(n.captive){risk+=6;factors.push(["Captive portal behavior","+6","bad"])}
+if(n.cert){risk+=8;factors.push(["Certificate anomaly in simulation","+8","bad"])}
+if(n.twin){risk+=20;factors.push(["BSSID mismatch / possible Evil Twin","+20","bad"])}
+risk=Math.max(0,Math.min(100,risk+10));
+if(n.twin)risk=Math.max(risk,87);
+return {risk,factors};
 }
-
-const colorMap = {safe:"var(--safe)", warn:"var(--warn)", danger:"var(--danger)"};
-
-networks.forEach((n,i)=>{
-  const blip = document.createElement('div');
-  blip.className='blip';
-  const [x,y] = polarToXY(n.angle, 32 + (i%2)*8);
-  blip.style.left = x+'%';
-  blip.style.top = y+'%';
-  blip.style.background = colorMap[n.level];
-  blip.style.color = colorMap[n.level];
-  blip.innerHTML = '<div class="ring"></div>';
-  radar.appendChild(blip);
-  n._el = blip;
-});
-
-function riskRingClass(level){ return 'risk-ring '+level; }
-function badgeClass(level){ return 'badge '+level; }
-
-let found = 0;
-networks.forEach((n, i)=>{
-  setTimeout(()=>{
-    n._el.style.transition='opacity 0.4s ease';
-    n._el.style.opacity='1';
-
-    const card = document.createElement('div');
-    card.className='card';
-    card.innerHTML = `
-      <div class="card-top">
-        <div>
-          <p class="ssid">${n.ssid}</p>
-          <div class="meta">${n.mac} · ${n.security}</div>
-          <span class="${badgeClass(n.level)}">${n.level.toUpperCase()} RISK</span>
-        </div>
-        <div class="${riskRingClass(n.level)}">${n.risk}</div>
-      </div>
-      <div class="reason">${n.reason}</div>
-      <button class="card-connect ${n.level==='safe' ? 'safe' : 'risky'}" onclick="handleConnect(${i})">Connect</button>
-    `;
-    container.appendChild(card);
-    requestAnimationFrame(()=>card.classList.add('show'));
-
-    found++;
-    scanCount.textContent = found+' / '+networks.length+' found';
-
-    if(n.level==='danger' && !alertBanner.classList.contains('show')){
-      alertBanner.classList.add('show');
-    }
-    if(found===networks.length){
-      radarLabel.textContent = 'scan complete';
-    }
-  }, 900 + i*950);
-});
-
-const resultPanel = document.getElementById('resultPanel');
-
-function handleConnect(index){
-  const n = networks[index];
-  resultPanel.classList.add('show');
-
-  if(n.level === 'safe'){
-    resultPanel.className = 'result-panel show safe';
-    resultPanel.innerHTML = `
-      <div class="result-head">✓ Connected to ${n.ssid} — this network looks safe</div>
-      <ul>
-        <li><b>${n.security} encryption</b> — your traffic is encrypted, not sent in plain text.</li>
-        <li><b>Consistent identity</b> — this SSID/MAC combination has no duplicates broadcasting nearby.</li>
-        <li><b>Trusted history</b> — this network has been safely used before at this location.</li>
-        <li><b>Stable signal</b> — signal behaves normally for a fixed access point.</li>
-      </ul>
-    `;
-  } else {
-    resultPanel.className = 'result-panel show danger';
-    resultPanel.innerHTML = `
-      <div class="result-head">⚠ Connection blocked — ${n.ssid} looks risky</div>
-      <ul>
-        <li>${n.reason.replace('<b>','<b>').replace(/High risk\.|Moderate risk\./,'')}</li>
-        <li><b>Security type:</b> ${n.security}${n.security === 'Open' ? ' — no encryption at all.' : ''}</li>
-      </ul>
-      <div class="result-suggest">
-        <span>We recommend <b>${networks[0].ssid}</b> instead — verified safe nearby.</span>
-        <button onclick="handleConnect(0)">Connect to ${networks[0].ssid}</button>
-      </div>
-    `;
-  }
-  resultPanel.scrollIntoView({behavior:'smooth', block:'center'});
+function level(r){return r<40?"low":r<70?"medium":"high"}
+function confidence(n){let c=86;if(n.known)c+=5;if(n.twin)c+=4;if(n.security==="Open")c+=2;return Math.min(c,98)}
+function badge(l){return l==="low"?"LOW RISK":l==="medium"?"MEDIUM RISK":"HIGH RISK"}
+function renderNetworks(){
+const g=document.getElementById("networkGrid");g.innerHTML="";
+networks.forEach((n,i)=>{let a=analyze(n),l=level(a.risk);let d=document.createElement("div");d.className="network";d.onclick=()=>selectNetwork(i);d.innerHTML=`<h3>${n.ssid}</h3><div class="meta">${n.security} · ${n.signal} dBm<br>${n.known?"Known network":"Unknown network"}</div><span class="badge ${n.twin?"twin":l}">${badge(l)} · ${a.risk}/100</span>`;g.appendChild(d)})
 }
-</script>
-</body>
-</html>
+function selectNetwork(i){
+selected=i;simulatedTwin=false;document.querySelectorAll(".network").forEach((x,j)=>x.classList.toggle("selected",j===i));
+renderAnalysis();document.getElementById("analysis").style.display="block";document.getElementById("analysis").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function renderAnalysis(){
+const n=networks[selected],a=analyze(n),l=level(a.risk), ring=document.getElementById("scoreRing");
+document.getElementById("scoreNumber").textContent=a.risk+"/100";document.getElementById("scoreLabel").textContent=badge(l);document.getElementById("confidence").textContent=confidence(n)+"%";
+ring.style.background=`conic-gradient(${l==="low"?"var(--safe)":l==="medium"?"var(--warn)":"var(--danger)"} ${a.risk*3.6}deg,#25304a 0deg)`;
+document.getElementById("selectedName").textContent=n.ssid;document.getElementById("selectedDesc").textContent=n.desc;
+let tb=document.getElementById("topBadge");tb.className="badge "+(n.twin?"twin":l);tb.textContent=badge(l);
+document.getElementById("reasons").innerHTML=a.factors.map(f=>`<div class="reason"><span>${f[2]==="good"?"✓":"⚠"} ${f[0]}</span><span class="${f[2]==="good"?"minus":"plus"}">${f[1]}</span></div>`).join("");
+document.getElementById("weights").innerHTML=a.factors.map(f=>`<div class="reason"><span>${f[0]}</span><span>${Math.abs(parseInt(f[1]))} pts</span></div>`).join("");
+const vals=[["SSID",n.ssid],["BSSID / MAC",n.bssid],["Security",n.security],["Authentication",n.auth],["Signal",n.signal+" dBm"],["Frequency",n.frequency],["Channel",n.channel],["Network type",n.type],["Known network",n.known?"Yes":"No"],["SSID similarity",n.similar?"Detected":"No"],["Identity change",n.unexpected?"Suspicious":"None"],["Captive portal",n.captive?"Detected":"Not simulated"]];
+document.getElementById("details").innerHTML=vals.map(v=>`<div class="detail"><label>${v[0]}</label><span>${v[1]}</span></div>`).join("");
+renderTwin(n);renderRecommendation(n,a.risk,l);
+}
+function renderTwin(n){
+let suspicious=n.twin||simulatedTwin;
+document.getElementById("evilTwin").innerHTML=suspicious?`<div class="compare"><div class="compare-box"><b>LEGITIMATE NETWORK</b><br>SSID: ${n.ssid}<br>BSSID: AA:BB:CC:11:22:33<br><span class="match">✓ Known identity</span></div><div class="compare-box"><b>SUSPICIOUS NETWORK</b><br>SSID: ${n.ssid}<br>BSSID: ${n.twin?n.bssid:"77:88:99:44:55:66"}<br><span class="mismatch">✕ BSSID mismatch</span><br><span class="mismatch">⚠ Security mismatch</span></div></div><p class="mismatch"><b>⚠ POSSIBLE EVIL TWIN DETECTED</b> — simulated educational scenario. Do not connect until the network identity is verified.</p>`:`<div class="compare-box"><span class="match">✓ No suspicious BSSID change</span><br><span class="match">✓ SSID matches the known network record</span><br><span class="match">✓ No simulated security mismatch</span></div>`;
+}
+function renderRecommendation(n,r,l){
+let text=l==="low"?"Connection appears reasonably low risk based on the available indicators. Continue using HTTPS, keep your device updated, and verify important networks independently.":l==="medium"?"Use caution. Verify the network identity before entering sensitive information. If possible, use a trusted network or mobile hotspot.":n.twin?"Possible Evil Twin detected. Do not connect until the access point identity has been verified.":"High estimated risk. Avoid connecting if possible; use a verified network or mobile hotspot.";
+let el=document.getElementById("recommendation");el.className="recommend "+l;el.innerHTML="<b>RECOMMENDATION</b><br>"+text+(l!=="low"?"<br><br>If Wi-Fi must be used, prefer HTTPS, use MFA, and consider a trusted VPN. A VPN does not prove the Wi-Fi is legitimate.":"");
+}
+function saveCurrent(){if(selected===null)return;let n=networks[selected],a=analyze(n),h=JSON.parse(localStorage.getItem("wifiSecureHistory")||"[]");h.unshift({ssid:n.ssid,risk:a.risk,time:new Date().toLocaleString()});localStorage.setItem("wifiSecureHistory",JSON.stringify(h.slice(0,20)));renderHistory()}
+function renderHistory(){let h=JSON.parse(localStorage.getItem("wifiSecureHistory")||"[]"),el=document.getElementById("history");el.innerHTML=h.length?h.map(x=>`<div class="history-row"><span>${x.time} · ${x.ssid}</span><b class="${level(x.risk)==="low"?"match":level(x.risk)==="medium"?"":"mismatch"}">${x.risk}/100</b></div>`).join(""):`<div class="empty">No scans saved yet. Analyze a network and click “Save to Scan History”.`}
+function clearHistory(){localStorage.removeItem("wifiSecureHistory");renderHistory()}
+function simulateTwin(){if(selected===null)selectNetwork(0);simulatedTwin=true;renderAnalysis();document.getElementById("evilTwin").scrollIntoView({behavior:"smooth",block:"center"})}
+function compareNetworks(){document.getElementById("networks").scrollIntoView({behavior:"smooth"});document.querySelector(".section-title").focus?.()}
+function scanAgain(){selected=null;document.getElementById("analysis").style.display="none";renderNetworks();document.getElementById("networks").scrollIntoView({behavior:"smooth"})}
+renderNetworks();renderHistory();
+</script></body></html>

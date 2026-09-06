@@ -259,7 +259,7 @@
     <div class="g-card"><b>Evil Twin</b><span>A fake Wi-Fi hotspot made to look exactly like a real one, set up to trick your phone into connecting.</span></div>
     <div class="g-card"><b>Man-in-the-Middle</b><span>When someone secretly sits between you and the internet, able to see what passes through.</span></div>
     <div class="g-card"><b>Open Network</b><span>Wi-Fi with no password — anyone nearby can potentially read what's sent over it.</span></div>
-    <div class="g-card"><b>VPN</b><span>A tool that scrambles your data into a private tunnel, so even a risky network can't read it.</span></div>
+    <div class="g-card"><b>VPN</b><span>A tool that can encrypt traffic between your device and a VPN server; it does not prove that a Wi-Fi network is legitimate.</span></div>
   </div>
 
   <div class="cta">
@@ -276,7 +276,7 @@ const scenes = document.querySelectorAll('.scene');
 const captions = [
   "Your phone sees a Wi-Fi network nearby, like \"Free_Airport_WiFi.\"",
   "You connect — but this network is a fake copy (an <b>evil twin</b>) set up by someone nearby, sitting between you and the real internet.",
-  "Because the connection isn't encrypted, that person can see what you type — <b>passwords, messages, even card details.</b>",
+  "Because the connection isn't encrypted, an untrusted network can observe some traffic metadata, and unencrypted application traffic may be exposed.",
   "<b>WifiSecure</b> spots the warning signs first and steers you to a safe network before any of this happens."
 ];
 const caption = document.getElementById('caption');
