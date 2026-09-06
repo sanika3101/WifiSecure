@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>WifiSecure — Risk Analysis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0A0F1E;--panel:#121A2C;--panel2:#1A2338;--grid:#212C46;--text:#EDF1F7;--muted:#7E8AA6;--safe:#35D0B0;--safeD:rgba(53,208,176,.14);--warn:#F2A93B;--warnD:rgba(242,169,59,.14);--danger:#FF5D5D;--dangerD:rgba(255,93,93,.14);--mono:'JetBrains Mono',monospace;--sans:'Inter',sans-serif}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse 900px 500px at 50% -10%,rgba(53,208,176,.08),transparent 60%),var(--bg);color:var(--text);font-family:var(--sans)}.wrap{max-width:1080px;margin:auto;padding:0 24px}nav{display:flex;justify-content:space-between;align-items:center;padding:22px 0;border-bottom:1px solid var(--grid)}.logo{font:700 15px var(--mono);display:flex;gap:10px;align-items:center}.logo span{width:9px;height:9px;border-radius:50%;background:var(--safe);box-shadow:0 0 0 4px var(--safeD)}.nav-links{display:flex;gap:24px}.nav-links a{color:var(--muted);text-decoration:none;font-size:14px}.nav-links a:hover,.nav-links .active{color:var(--safe)}
+header{padding:45px 0 25px}.eyebrow{font:12px var(--mono);color:var(--safe);letter-spacing:.13em;text-transform:uppercase}h1{font-size:36px;margin:10px 0}.sub{color:var(--muted);line-height:1.6;max-width:720px}.demo-banner{margin:18px 0;padding:12px 15px;border:1px solid var(--grid);background:var(--panel);border-radius:10px;font:12px var(--mono);color:var(--muted)}.section-title{font:700 14px var(--mono);letter-spacing:.08em;text-transform:uppercase;margin:34px 0 14px}.networks{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.network{background:var(--panel);border:1px solid var(--grid);border-radius:14px;padding:18px;cursor:pointer;transition:.2s}.network:hover,.network.selected{border-color:var(--safe);transform:translateY(-2px)}.network h3{margin:0 0 6px;font-size:15px}.meta{font:11px var(--mono);color:var(--muted);line-height:1.7}.badge{display:inline-block;margin-top:12px;padding:5px 8px;border-radius:6px;font:700 10px var(--mono)}.low{background:var(--safeD);color:var(--safe)}.medium{background:var(--warnD);color:var(--warn)}.high{background:var(--dangerD);color:var(--danger)}.twin{background:rgba(255,93,93,.2);color:var(--danger)}
+#analysis{display:none;margin-top:24px}.topgrid{display:grid;grid-template-columns:300px 1fr;gap:18px}.card{background:var(--panel);border:1px solid var(--grid);border-radius:15px;padding:22px}.score-card{text-align:center}.score-ring{width:170px;height:170px;margin:8px auto 18px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:conic-gradient(var(--safe) 0deg,#25304a 0deg);position:relative}.score-ring:after{content:'';position:absolute;inset:12px;border-radius:50%;background:var(--panel)}.score-number{position:relative;z-index:1;font:700 32px var(--mono)}.score-label{font:700 12px var(--mono);letter-spacing:.08em}.confidence{color:var(--muted);font-size:12px;margin-top:10px}.confidence b{color:var(--text)}.headrow{display:flex;justify-content:space-between;align-items:flex-start;gap:15px}.headrow h2{margin:0 0 5px;font-size:23px}.small{font:11px var(--mono);color:var(--muted)}h3{font-size:14px;margin:0 0 14px}.reasons{display:grid;gap:8px}.reason{display:flex;justify-content:space-between;gap:15px;padding:10px 12px;background:var(--panel2);border-radius:8px;font-size:12px}.plus{color:var(--danger);font-family:var(--mono)}.minus{color:var(--safe);font-family:var(--mono)}.details{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.detail{padding:12px;background:var(--panel2);border-radius:8px}.detail label{display:block;color:var(--muted);font:10px var(--mono);text-transform:uppercase;margin-bottom:5px}.detail span{font-size:12px;word-break:break-word}.recommend{margin-top:18px;border-radius:12px;padding:17px;background:var(--safeD);border:1px solid rgba(53,208,176,.25);font-size:13px;line-height:1.6}.recommend.medium{background:var(--warnD);border-color:rgba(242,169,59,.25)}.recommend.high{background:var(--dangerD);border-color:rgba(255,93,93,.25)}.evil{margin-top:18px}.compare{display:grid;grid-template-columns:1fr 1fr;gap:12px}.compare-box{background:var(--panel2);padding:15px;border-radius:10px;font-size:12px;line-height:1.8}.match{color:var(--safe)}.mismatch{color:var(--danger)}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.btn{border:1px solid var(--grid);background:var(--panel2);color:var(--text);padding:11px 15px;border-radius:8px;cursor:pointer;font-weight:600}.btn.primary{background:var(--safe);border-color:var(--safe);color:#04211C}.btn.danger{color:var(--danger)}.history-row{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--grid);font-size:12px}.history-row:last-child{border:0}.empty{color:var(--muted);font-size:12px}.edu{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:50px}.edu p{color:var(--muted);font-size:13px;line-height:1.7}.flow{display:flex;gap:7px;flex-wrap:wrap;align-items:center}.flow span{padding:8px 10px;background:var(--panel2);border-radius:7px;font:11px var(--mono)}footer{border-top:1px solid var(--grid);padding:25px 0 45px;color:var(--muted);font:11px/1.7 var(--mono);text-align:center}
+@media(max-width:850px){.networks{grid-template-columns:repeat(2,1fr)}.topgrid,.edu{grid-template-columns:1fr}}@media(max-width:600px){.wrap{padding:0 15px}.nav-links{gap:10px}.nav-links a{font-size:11px}.networks,.details,.compare{grid-template-columns:1fr}h1{font-size:29px}}
+</style></head>
+<body><div class="wrap">
+<nav><div class="logo"><span></span>WIFISECURE</div><div class="nav-links"><a href="index.html">Home</a><a class="active" href="demo.html">Analyze</a><a href="learn.html">Learn</a><a href="model.html">AI Model</a></div></nav>
+<header><div class="eyebrow">Simulated Wi-Fi Analysis</div><h1>How risky is this Wi-Fi?</h1><p class="sub">Select a demo network to calculate a transparent 0–100 risk score, understand why it was flagged, inspect its network details, and check for possible Evil Twin behavior.</p><div class="demo-banner">DEMO MODE — Browser-based Wi-Fi scanning is simulated. This page does not perform real network attacks or scan nearby access points.</div></header>
+
+<div id="networks"><div class="section-title">Available demo networks</div><div class="networks" id="networkGrid"></div></div>
+<section id="analysis">
+<div class="section-title">WifiSecure analysis</div>
+<div class="topgrid">
+<div class="card score-card"><div class="small">RISK SCORE</div><div class="score-ring" id="scoreRing"><div class="score-number" id="scoreNumber">0</div></div><div class="score-label" id="scoreLabel">—</div><div class="confidence">Analysis confidence: <b id="confidence">—</b></div></div>
+<div class="card"><div class="headrow"><div><h2 id="selectedName">Network</h2><div class="small" id="selectedDesc"></div></div><span class="badge" id="topBadge"></span></div><div class="section-title" style="margin-top:22px">Why we flagged this network</div><div class="reasons" id="reasons"></div><div class="section-title">Risk factor weights</div><div class="reasons" id="weights"></div></div>
+</div>
+<div class="card" style="margin-top:18px"><div class="section-title" style="margin-top:0">Network details</div><div class="details" id="details"></div></div>
+<div class="card evil"><div class="section-title" style="margin-top:0">Evil Twin check</div><div id="evilTwin"></div></div>
+<div class="recommend" id="recommendation"></div>
+<div class="actions"><button class="btn primary" onclick="saveCurrent()">Save to Scan History</button><button class="btn" onclick="simulateTwin()">Simulate Evil Twin</button><button class="btn" onclick="compareNetworks()">Compare Networks</button><button class="btn" onclick="scanAgain()">Scan Again</button></div>
+</section>
+
+<div class="section-title">Scan history</div><div class="card" id="history"><div class="empty">No scans saved yet.</div></div><div class="actions"><button class="btn danger" onclick="clearHistory()">Clear History</button></div>
+
+<div class="section-title">How WifiSecure works</div><div class="edu"><div class="card"><h3>Risk analysis flow</h3><div class="flow"><span>Wi-Fi information</span>→<span>Feature extraction</span>→<span>Risk engine</span>→<span>Prediction</span>→<span>Explanation</span>→<span>Recommendation</span></div><p>The current dashboard uses transparent rules for the demo. A future ML classifier can augment this engine when validated on broader data.</p></div><div class="card"><h3>What can this network see?</h3><p><b>Without HTTPS:</b> some web activity and data may be exposed depending on the application.</p><p><b>With HTTPS:</b> website content and credentials are encrypted in transit. HTTPS protects the application connection; it does not prove that the Wi-Fi network itself is trustworthy.</p><p><b>VPN:</b> a trusted VPN can encrypt traffic between your device and the VPN server, but it does not prove the Wi-Fi is legitimate.</p></div></div>
+
+<footer>WifiSecure provides a risk assessment based on available indicators. It cannot guarantee that a network is completely safe. Always verify trusted networks independently and use HTTPS and other security best practices.<br><br>All Wi-Fi data and Evil Twin behavior on this page are simulated for educational purposes.</footer>
+</div>
+<script>
+const networks=[
+{ssid:"Campus_WiFi",bssid:"AA:BB:CC:11:22:33",security:"WPA2",auth:"Enterprise",signal:-48,frequency:"5 GHz",channel:36,type:"Infrastructure",known:true,similar:false,captive:false,cert:false,unexpected:false,twin:false,desc:"Known campus access point"},
+{ssid:"Library_WiFi",bssid:"10:22:33:44:55:66",security:"WPA3",auth:"SAE",signal:-55,frequency:"5 GHz",channel:40,type:"Infrastructure",known:true,similar:false,captive:false,cert:false,unexpected:false,twin:false,desc:"Known library network"},
+{ssid:"Cafe_Free_WiFi",bssid:"20:31:42:53:64:75",security:"Open",auth:"None",signal:-62,frequency:"2.4 GHz",channel:6,type:"Infrastructure",known:false,similar:false,captive:true,cert:false,unexpected:false,twin:false,desc:"Public network with captive portal"},
+{ssid:"Campus_WiFi",bssid:"77:88:99:44:55:66",security:"Open",auth:"None",signal:-39,frequency:"2.4 GHz",channel:1,type:"Infrastructure",known:false,similar:true,captive:true,cert:true,unexpected:true,twin:true,desc:"Suspicious copy of a known SSID"}
+];
+let selected=null, simulatedTwin=false;
+
+function analyze(n){
+let factors=[], risk=0;
+if(n.security==="WPA3"){risk-=18;factors.push(["WPA3 encryption","-18","good"])}
+else if(n.security==="WPA2"){risk-=15;factors.push(["WPA2 encryption","-15","good"])}
+else{risk+=28;factors.push(["Open network — no Wi-Fi encryption","+28","bad"])}
+if(n.known){risk-=18;factors.push(["Known access point","-18","good"])}else{risk+=16;factors.push(["Unknown access point","+16","bad"])}
+if(n.auth==="Enterprise"){risk-=10;factors.push(["Enterprise authentication","-10","good"])}
+else if(n.auth==="SAE"){risk-=7;factors.push(["Modern SAE authentication","-7","good"])}
+else{risk+=8;factors.push(["No network authentication","+8","bad"])}
+if(n.signal>-50){risk-=5;factors.push(["Strong signal","-5","good"])}
+else if(n.signal<-75){risk+=4;factors.push(["Very weak signal","+4","bad"])}
+if(n.similar){risk+=14;factors.push(["SSID resembles a trusted network","+14","bad"])}
+if(n.unexpected){risk+=10;factors.push(["Unexpected access point change","+10","bad"])}
+if(n.captive){risk+=6;factors.push(["Captive portal behavior","+6","bad"])}
+if(n.cert){risk+=8;factors.push(["Certificate anomaly in simulation","+8","bad"])}
+if(n.twin){risk+=20;factors.push(["BSSID mismatch / possible Evil Twin","+20","bad"])}
+risk=Math.max(0,Math.min(100,risk+10));
+if(n.twin)risk=Math.max(risk,87);
+return {risk,factors};
+}
+function level(r){return r<40?"low":r<70?"medium":"high"}
+function confidence(n){let c=86;if(n.known)c+=5;if(n.twin)c+=4;if(n.security==="Open")c+=2;return Math.min(c,98)}
+function badge(l){return l==="low"?"LOW RISK":l==="medium"?"MEDIUM RISK":"HIGH RISK"}
+function renderNetworks(){
+const g=document.getElementById("networkGrid");g.innerHTML="";
+networks.forEach((n,i)=>{let a=analyze(n),l=level(a.risk);let d=document.createElement("div");d.className="network";d.onclick=()=>selectNetwork(i);d.innerHTML=`<h3>${n.ssid}</h3><div class="meta">${n.security} · ${n.signal} dBm<br>${n.known?"Known network":"Unknown network"}</div><span class="badge ${n.twin?"twin":l}">${badge(l)} · ${a.risk}/100</span>`;g.appendChild(d)})
+}
+function selectNetwork(i){
+selected=i;simulatedTwin=false;document.querySelectorAll(".network").forEach((x,j)=>x.classList.toggle("selected",j===i));
+renderAnalysis();document.getElementById("analysis").style.display="block";document.getElementById("analysis").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function renderAnalysis(){
+const n=networks[selected],a=analyze(n),l=level(a.risk), ring=document.getElementById("scoreRing");
+document.getElementById("scoreNumber").textContent=a.risk+"/100";document.getElementById("scoreLabel").textContent=badge(l);document.getElementById("confidence").textContent=confidence(n)+"%";
+ring.style.background=`conic-gradient(${l==="low"?"var(--safe)":l==="medium"?"var(--warn)":"var(--danger)"} ${a.risk*3.6}deg,#25304a 0deg)`;
+document.getElementById("selectedName").textContent=n.ssid;document.getElementById("selectedDesc").textContent=n.desc;
+let tb=document.getElementById("topBadge");tb.className="badge "+(n.twin?"twin":l);tb.textContent=badge(l);
+document.getElementById("reasons").innerHTML=a.factors.map(f=>`<div class="reason"><span>${f[2]==="good"?"✓":"⚠"} ${f[0]}</span><span class="${f[2]==="good"?"minus":"plus"}">${f[1]}</span></div>`).join("");
+document.getElementById("weights").innerHTML=a.factors.map(f=>`<div class="reason"><span>${f[0]}</span><span>${Math.abs(parseInt(f[1]))} pts</span></div>`).join("");
+const vals=[["SSID",n.ssid],["BSSID / MAC",n.bssid],["Security",n.security],["Authentication",n.auth],["Signal",n.signal+" dBm"],["Frequency",n.frequency],["Channel",n.channel],["Network type",n.type],["Known network",n.known?"Yes":"No"],["SSID similarity",n.similar?"Detected":"No"],["Identity change",n.unexpected?"Suspicious":"None"],["Captive portal",n.captive?"Detected":"Not simulated"]];
+document.getElementById("details").innerHTML=vals.map(v=>`<div class="detail"><label>${v[0]}</label><span>${v[1]}</span></div>`).join("");
+renderTwin(n);renderRecommendation(n,a.risk,l);
+}
+function renderTwin(n){
+let suspicious=n.twin||simulatedTwin;
+document.getElementById("evilTwin").innerHTML=suspicious?`<div class="compare"><div class="compare-box"><b>LEGITIMATE NETWORK</b><br>SSID: ${n.ssid}<br>BSSID: AA:BB:CC:11:22:33<br><span class="match">✓ Known identity</span></div><div class="compare-box"><b>SUSPICIOUS NETWORK</b><br>SSID: ${n.ssid}<br>BSSID: ${n.twin?n.bssid:"77:88:99:44:55:66"}<br><span class="mismatch">✕ BSSID mismatch</span><br><span class="mismatch">⚠ Security mismatch</span></div></div><p class="mismatch"><b>⚠ POSSIBLE EVIL TWIN DETECTED</b> — simulated educational scenario. Do not connect until the network identity is verified.</p>`:`<div class="compare-box"><span class="match">✓ No suspicious BSSID change</span><br><span class="match">✓ SSID matches the known network record</span><br><span class="match">✓ No simulated security mismatch</span></div>`;
+}
+function renderRecommendation(n,r,l){
+let text=l==="low"?"Connection appears reasonably low risk based on the available indicators. Continue using HTTPS, keep your device updated, and verify important networks independently.":l==="medium"?"Use caution. Verify the network identity before entering sensitive information. If possible, use a trusted network or mobile hotspot.":n.twin?"Possible Evil Twin detected. Do not connect until the access point identity has been verified.":"High estimated risk. Avoid connecting if possible; use a verified network or mobile hotspot.";
+let el=document.getElementById("recommendation");el.className="recommend "+l;el.innerHTML="<b>RECOMMENDATION</b><br>"+text+(l!=="low"?"<br><br>If Wi-Fi must be used, prefer HTTPS, use MFA, and consider a trusted VPN. A VPN does not prove the Wi-Fi is legitimate.":"");
+}
+function saveCurrent(){if(selected===null)return;let n=networks[selected],a=analyze(n),h=JSON.parse(localStorage.getItem("wifiSecureHistory")||"[]");h.unshift({ssid:n.ssid,risk:a.risk,time:new Date().toLocaleString()});localStorage.setItem("wifiSecureHistory",JSON.stringify(h.slice(0,20)));renderHistory()}
+function renderHistory(){let h=JSON.parse(localStorage.getItem("wifiSecureHistory")||"[]"),el=document.getElementById("history");el.innerHTML=h.length?h.map(x=>`<div class="history-row"><span>${x.time} · ${x.ssid}</span><b class="${level(x.risk)==="low"?"match":level(x.risk)==="medium"?"":"mismatch"}">${x.risk}/100</b></div>`).join(""):`<div class="empty">No scans saved yet. Analyze a network and click “Save to Scan History”.`}
+function clearHistory(){localStorage.removeItem("wifiSecureHistory");renderHistory()}
+function simulateTwin(){if(selected===null)selectNetwork(0);simulatedTwin=true;renderAnalysis();document.getElementById("evilTwin").scrollIntoView({behavior:"smooth",block:"center"})}
+function compareNetworks(){document.getElementById("networks").scrollIntoView({behavior:"smooth"});document.querySelector(".section-title").focus?.()}
+function scanAgain(){selected=null;document.getElementById("analysis").style.display="none";renderNetworks();document.getElementById("networks").scrollIntoView({behavior:"smooth"})}
+renderNetworks();renderHistory();
+</script></body></html>
